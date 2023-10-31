@@ -4,15 +4,15 @@ services:
   app:
     build:
       context: ./
-      dockerfile: dockerfile
-    image: todo-list-devops
-    container_name: todolist-devops
+      dockerfile: ./dockerfile
+    image: queue
+    container_name: queue
     ports:
       - 3000:3000
     networks:
-      - todolist
+      - queue
 
 networks:
-  todolist:
+  queue:
     driver: brigde
 
