@@ -10,6 +10,6 @@ COPY package.json .
 
 RUN yarn install
 
-COPY . .
+#COPY . .
 
-CMD ["yarn", "dev"]
+CMD ["yarn", "dev:tsc"]

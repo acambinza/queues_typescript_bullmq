@@ -4,15 +4,30 @@ services:
   app:
     build:
       context: ./
-      dockerfile: ./dockerfile
+      dockerfile: ./Dockerfile
     image: queue
     container_name: queue
+    volumes:
+      - ./:/home/app
     ports:
       - 3000:3000
     networks:
-      - queue
+      - queue-net
+    links:
+      - cache
+    depends_on:
+      - cache
+
+
+  cache:
+    image: redis:6-alpine
+    container_name: redis-noah-api
+    ports:
+      - 6379:6379
+    networks:
+      - queue-net
+
 
 networks:
-  queue:
-    driver: brigde
-
+  queue-net:
+    driver: bridge
