@@ -27,6 +27,51 @@ services:
     networks:
       - queue-net
 
+    
+  loki:
+    image: grafana/loki:2.5.0
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+      - -print-config-stderr=true
+    volumes:
+      - "./config/loki/config.yaml:/etc/loki/local-config.yaml"
+    networks:
+      - queue-net
+    
+  promtail:
+    image: grafana/promtail:2.5.0
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - queue-net
+    ports:
+      - 9080:9080  
+    volumes:
+      - "./logs:/logs"
+      - "./config/prometheus/config.yml:/etc/promtail/config.yml"
+
+  grafana: 
+    image: grafana/grafana:9.0.1
+    ports:
+      - "3000:3000"
+    depends_on: 
+      - loki
+    networks: 
+      - queue-net
+    links:
+      - loki
+
+
+    #bullexporter:
+    #  image: grapevineai/bull-exporter:1.3.9
+    #  env:
+    #  # space delimited list of queues
+    #    - name: EXPORTER_QUEUES
+    #      value: "mail job_one video audio"
+    #    # find the redis service in the cluster
+    #    - name: EXPORTER_REDIS_URL
+    #      value: redis://redis:6379/0
 
 networks:
   queue-net:
